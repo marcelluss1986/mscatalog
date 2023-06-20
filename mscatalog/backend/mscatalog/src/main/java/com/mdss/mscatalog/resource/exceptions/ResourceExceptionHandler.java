@@ -1,5 +1,6 @@
 package com.mdss.mscatalog.resource.exceptions;
 
+import com.mdss.mscatalog.services.execptions.DataException;
 import com.mdss.mscatalog.services.execptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,17 @@ public class ResourceExceptionHandler {
         err.setStatus(status.value());
         err.setError(e.getMessage());
         err.setMessage("Resource Not found, try again!");
+        err.setPath(request.getRequestURI());
+        return ResponseEntity.status(status).body(err);
+    }
+
+    public ResponseEntity<StandardError> dataIntegrityExcption(DataException e, HttpServletRequest request){
+        StandardError err = new StandardError();
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        err.setTimestamp(Instant.now());
+        err.setStatus(status.value());
+        err.setError(e.getMessage());
+        err.setMessage("Violation Integrity!");
         err.setPath(request.getRequestURI());
         return ResponseEntity.status(status).body(err);
     }
