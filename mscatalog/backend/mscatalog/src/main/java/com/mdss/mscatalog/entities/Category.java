@@ -14,9 +14,9 @@ public class Category {
     private Long id;
     private String name;
 
-    @Column(columnDefinition = "TIMESTAMP WITHOU TIME ZONE")
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant createdAt;
-    @Column(columnDefinition = "TIMESTAMP WITHOU TIME ZONE")
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant updateAt;
 
     public Category(){

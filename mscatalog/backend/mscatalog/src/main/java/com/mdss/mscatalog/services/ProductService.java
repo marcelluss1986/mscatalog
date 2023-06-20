@@ -1,11 +1,15 @@
 package com.mdss.mscatalog.services;
 
+import com.mdss.mscatalog.dto.CategoryDTO;
 import com.mdss.mscatalog.dto.ProductDTO;
+import com.mdss.mscatalog.entities.Category;
 import com.mdss.mscatalog.entities.Product;
+import com.mdss.mscatalog.repositories.CategoryRepository;
 import com.mdss.mscatalog.repositories.ProductRepository;
 import com.mdss.mscatalog.services.execptions.DataException;
 import com.mdss.mscatalog.services.execptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +27,9 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
+    @Autowired
+    private CategoryRepository categoryRepository;
+
     public Page<ProductDTO> findAll(Pageable pageable){
         Page<Product> page = productRepository.findAll(pageable);
         return page.map(x -> new ProductDTO(x));
@@ -32,12 +39,12 @@ public class ProductService {
     public ProductDTO findById(Long id){
         Optional<Product> obj = productRepository.findById(id);
         Product entity = obj.orElseThrow(()-> new ResourceNotFoundException("Not found! " + id));
-        return new ProductDTO(entity);
+        return new ProductDTO(entity, entity.getCategories());
     }
 
     public ProductDTO newProduct(ProductDTO dto){
         Product entity = new Product();
-        entity.setName(dto.getName());
+        entityToDto(entity, dto);
         entity = productRepository.save(entity);
         return new ProductDTO(entity);
     }
@@ -46,7 +53,7 @@ public class ProductService {
     public ProductDTO update(Long id, ProductDTO dto){
         try {
             Product entity = productRepository.getReferenceById(id);
-            entity.setName(dto.getName());
+            entityToDto(entity, dto);
             entity = productRepository.save(entity);
             return new ProductDTO(entity);
         }
@@ -66,6 +73,19 @@ public class ProductService {
         }
     }
 
+
+    private void entityToDto(Product entity, ProductDTO dto) {
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
+        entity.setImgUrl(dto.getImgUrl());
+
+        entity.getCategories().clear();
+        for(CategoryDTO catDTO: dto.getCategories()){
+            Category category = categoryRepository.getReferenceById(catDTO.getId());
+            entity.getCategories().add(category);
+        }
+    }
 
 
 }

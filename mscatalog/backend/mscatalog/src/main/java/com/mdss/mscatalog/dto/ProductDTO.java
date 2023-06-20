@@ -2,13 +2,8 @@ package com.mdss.mscatalog.dto;
 
 import com.mdss.mscatalog.entities.Category;
 import com.mdss.mscatalog.entities.Product;
-import jakarta.persistence.Column;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +15,7 @@ public class ProductDTO {
     private Double price;
     private String imgUrl;
 
-    private List<Category> categories = new ArrayList<>();
+    private List<CategoryDTO> categories = new ArrayList<>();
 
     public ProductDTO() {
     }
@@ -39,6 +34,11 @@ public class ProductDTO {
         this.description = entity.getDescription();
         this.price = entity.getPrice();
         this.imgUrl = entity.getImgUrl();
+    }
+
+    public ProductDTO(Product entity, Set<Category> categories){
+        this(entity);
+        categories.forEach(cat -> this.categories.add(new CategoryDTO(cat)));
     }
 
     public Long getId() {
@@ -81,7 +81,7 @@ public class ProductDTO {
         this.imgUrl = imgUrl;
     }
 
-    public List<Category> getCategories() {
+    public List<CategoryDTO> getCategories() {
         return categories;
     }
 }
