@@ -1,4 +1,4 @@
-package com.mdss.mscatalog.resource.exceptions;
+package com.mdss.mscatalog.resources.exceptions;
 
 import com.mdss.mscatalog.services.execptions.DataException;
 import com.mdss.mscatalog.services.execptions.ResourceNotFoundException;

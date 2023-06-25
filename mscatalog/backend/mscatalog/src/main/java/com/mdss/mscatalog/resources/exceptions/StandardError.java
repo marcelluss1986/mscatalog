@@ -1,4 +1,4 @@
-package com.mdss.mscatalog.resource.exceptions;
+package com.mdss.mscatalog.resources.exceptions;
 
 import java.time.Instant;
 

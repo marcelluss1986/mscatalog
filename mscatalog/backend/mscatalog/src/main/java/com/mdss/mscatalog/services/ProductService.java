@@ -42,7 +42,8 @@ public class ProductService {
         return new ProductDTO(entity, entity.getCategories());
     }
 
-    public ProductDTO newProduct(ProductDTO dto){
+    @Transactional
+    public ProductDTO insert(ProductDTO dto){
         Product entity = new Product();
         entityToDto(entity, dto);
         entity = productRepository.save(entity);
@@ -62,6 +63,7 @@ public class ProductService {
         }
     }
 
+    @Transactional
     public void delete(Long id){
         if(!productRepository.existsById(id)){
             throw new ResourceNotFoundException("Id does not exist: " + id);
