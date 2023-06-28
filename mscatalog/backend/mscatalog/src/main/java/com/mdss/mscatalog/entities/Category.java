@@ -3,7 +3,9 @@ package com.mdss.mscatalog.entities;
 import jakarta.persistence.*;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "tb_category")
@@ -18,6 +20,9 @@ public class Category {
     private Instant createdAt;
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant updateAt;
+
+    @ManyToMany(mappedBy = "categories")
+    Set<Product>products = new HashSet<>();
 
     public Category(){
     }
@@ -49,6 +54,10 @@ public class Category {
 
     public Instant getUpdateAt() {
         return updateAt;
+    }
+
+    public Set<Product> getProducts() {
+        return products;
     }
 
     @PrePersist
