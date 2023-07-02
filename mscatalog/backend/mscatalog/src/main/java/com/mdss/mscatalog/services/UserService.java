@@ -1,0 +1,97 @@
+package com.mdss.mscatalog.services;
+
+import com.mdss.mscatalog.dto.RoleDTO;
+import com.mdss.mscatalog.dto.UserDTO;
+import com.mdss.mscatalog.dto.UserInsertDTO;
+import com.mdss.mscatalog.entities.Role;
+import com.mdss.mscatalog.entities.User;
+import com.mdss.mscatalog.repositories.RoleRepository;
+import com.mdss.mscatalog.repositories.UserRepository;
+import com.mdss.mscatalog.services.execptions.DataException;
+import com.mdss.mscatalog.services.execptions.ResourceNotFoundException;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
+
+@Service
+public class UserService {
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
+    private UserRepository userRepository;
+
+    public UserService(UserRepository userRepository){
+        this.userRepository = userRepository;
+    }
+
+    @Autowired
+    private RoleRepository roleRepository;
+
+    public Page<UserDTO> findAll(Pageable pageable){
+        Page<User> page = userRepository.findAll(pageable);
+        return page.map(x -> new UserDTO(x));
+
+    }
+
+    public UserDTO findById(Long id){
+        Optional<User> obj = userRepository.findById(id);
+        User entity = obj.orElseThrow(()-> new ResourceNotFoundException("Not found! " + id));
+        return new UserDTO(entity);
+    }
+
+    @Transactional
+    public UserDTO insert(UserInsertDTO dto){
+        User entity = new User();
+        copyDtoToEntity(entity, dto);
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        entity = userRepository.save(entity);
+        return new UserDTO(entity);
+    }
+
+    @Transactional
+    public UserDTO update(Long id, UserInsertDTO dto){
+        try {
+            User entity = userRepository.getReferenceById(id);
+            copyDtoToEntity(entity, dto);
+            entity = userRepository.save(entity);
+            return new UserDTO(entity);
+        }
+        catch (EntityNotFoundException e){
+            throw new ResourceNotFoundException("Not at all");
+        }
+    }
+
+    public void delete(Long id){
+        if(!userRepository.existsById(id)){
+            throw new ResourceNotFoundException("Id does not exist: " + id);
+        }
+        try {
+            userRepository.deleteById(id);
+        }catch (DataIntegrityViolationException e){
+            throw new DataException("Resource has dependecy");
+        }
+    }
+
+    private void copyDtoToEntity(User entity, UserDTO dto) {
+        entity.setFirstName(dto.getFirstName());
+        entity.setLastName(dto.getLastName());
+        entity.setEmail(dto.getEmail());
+
+        entity.getRoles().clear();
+        for(RoleDTO roleDTO: dto.getRoles()){
+            Role role = roleRepository.getReferenceById(roleDTO.getId());
+            entity.getRoles().add(role);
+        }
+    }
+
+
+
+}

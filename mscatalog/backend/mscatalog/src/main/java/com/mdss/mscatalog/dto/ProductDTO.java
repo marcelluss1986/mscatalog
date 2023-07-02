@@ -2,6 +2,8 @@ package com.mdss.mscatalog.dto;
 
 import com.mdss.mscatalog.entities.Category;
 import com.mdss.mscatalog.entities.Product;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +12,11 @@ import java.util.Set;
 public class ProductDTO {
 
     private Long id;
+    @NotBlank(message = "Required field!")
     private String name;
+    @NotBlank(message = "Required field!")
     private String description;
+    @Positive(message = "Price must be a positive value.")
     private Double price;
     private String imgUrl;
 
