@@ -1,4 +1,4 @@
-package com.mdss.mscatalog.services.execptions;
+package com.mdss.mscatalog.services.exceptions;
 
 public class ResourceNotFoundException extends RuntimeException {
 

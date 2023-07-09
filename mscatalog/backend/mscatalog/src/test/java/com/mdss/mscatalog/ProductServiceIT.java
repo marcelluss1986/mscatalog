@@ -3,7 +3,7 @@ package com.mdss.mscatalog;
 import com.mdss.mscatalog.dto.ProductDTO;
 import com.mdss.mscatalog.repositories.ProductRepository;
 import com.mdss.mscatalog.services.ProductService;
-import com.mdss.mscatalog.services.execptions.ResourceNotFoundException;
+import com.mdss.mscatalog.services.exceptions.ResourceNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

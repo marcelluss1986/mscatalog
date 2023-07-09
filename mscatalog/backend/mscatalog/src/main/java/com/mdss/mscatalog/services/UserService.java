@@ -5,26 +5,29 @@ import com.mdss.mscatalog.dto.UserDTO;
 import com.mdss.mscatalog.dto.UserInsertDTO;
 import com.mdss.mscatalog.entities.Role;
 import com.mdss.mscatalog.entities.User;
+import com.mdss.mscatalog.projections.UserDetailsProjection;
 import com.mdss.mscatalog.repositories.RoleRepository;
 import com.mdss.mscatalog.repositories.UserRepository;
-import com.mdss.mscatalog.services.execptions.DataException;
-import com.mdss.mscatalog.services.execptions.ResourceNotFoundException;
+import com.mdss.mscatalog.services.exceptions.DataException;
+import com.mdss.mscatalog.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
-public class UserService {
-
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
 
@@ -51,7 +54,7 @@ public class UserService {
     public UserDTO insert(UserInsertDTO dto){
         User entity = new User();
         copyDtoToEntity(entity, dto);
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        entity.setPassword(dto.getPassword());
         entity = userRepository.save(entity);
         return new UserDTO(entity);
     }
@@ -93,5 +96,19 @@ public class UserService {
     }
 
 
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        List<UserDetailsProjection> result = userRepository.searchUserAndRolesByEmail(username);
+        if(result.size() == 0){
+            throw new UsernameNotFoundException("email not found");
+        }
 
+        User user = new User();
+        user.setEmail(result.get(0).getUsername());
+        user.setPassword(result.get(0).getPassword());
+        for (UserDetailsProjection projection : result){
+            user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
+        }
+        return user;
+    }
 }

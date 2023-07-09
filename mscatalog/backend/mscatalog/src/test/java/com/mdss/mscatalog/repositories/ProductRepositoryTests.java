@@ -1,7 +1,6 @@
 package com.mdss.mscatalog.repositories;
 
 import com.mdss.mscatalog.entities.Product;
-import com.mdss.mscatalog.services.execptions.ResourceNotFoundException;
 import com.mdss.mscatalog.tests.Factory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

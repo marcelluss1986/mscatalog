@@ -4,6 +4,7 @@ import com.mdss.mscatalog.entities.Category;
 import com.mdss.mscatalog.entities.Product;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,8 @@ import java.util.Set;
 public class ProductDTO {
 
     private Long id;
+    @Size(min = 5,  message = "It must be between minimun 5 characters.")
+    @Size(max = 60, message = "max 60 characters.")
     @NotBlank(message = "Required field!")
     private String name;
     @NotBlank(message = "Required field!")

@@ -1,7 +1,8 @@
 package com.mdss.mscatalog.dto;
 
-import com.mdss.mscatalog.entities.User;
+import com.mdss.mscatalog.services.validation.UserInsertValid;
 
+@UserInsertValid
 public class UserInsertDTO extends UserDTO{
 
     private String password;

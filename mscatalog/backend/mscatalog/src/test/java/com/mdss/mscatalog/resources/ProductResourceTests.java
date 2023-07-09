@@ -5,8 +5,8 @@ import com.mdss.mscatalog.dto.ProductDTO;
 import com.mdss.mscatalog.entities.Product;
 import com.mdss.mscatalog.repositories.ProductRepository;
 import com.mdss.mscatalog.services.ProductService;
-import com.mdss.mscatalog.services.execptions.DataException;
-import com.mdss.mscatalog.services.execptions.ResourceNotFoundException;
+import com.mdss.mscatalog.services.exceptions.DataException;
+import com.mdss.mscatalog.services.exceptions.ResourceNotFoundException;
 import com.mdss.mscatalog.tests.Factory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
